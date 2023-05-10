@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:wasteclassifier/classifier/category.dart';
 import 'package:wasteclassifier/classifier/classifier.dart';
 import 'package:image/image.dart' as img;
 
@@ -15,6 +16,9 @@ const _labelsFileName = 'assets/labels.txt';
 const _modelFileName = 'model_unquant.tflite';
 
 class HomeScreenState extends State<HomeScreen> {
+  String _result = 'NOTHING';
+  String _category = 'NOTHING';
+
   Future<void> _loadClassifier() async {
     debugPrint(
       'Start loading of Classifier with '
@@ -73,7 +77,7 @@ class HomeScreenState extends State<HomeScreen> {
       await controller?.startImageStream((CameraImage image) {
         count++;
 
-        if (count % 15 != 0) {
+        if (count % 25 != 0) {
           return;
         }
 
@@ -87,6 +91,13 @@ class HomeScreenState extends State<HomeScreen> {
         );
 
         final results = _classifier.predict(convertedImage);
+
+        if (mounted) {
+          setState(() {
+            _result = results.label.toUpperCase();
+            _category = getCategory(results.label);
+          });
+        }
 
         log("Results: $results");
       });
@@ -109,24 +120,64 @@ class HomeScreenState extends State<HomeScreen> {
         title: const Text('Waste Classifier'),
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
-              child: buildCam(),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                color: Colors.blue,
-                child: const Center(
-                  child: Text('Results'),
-                ),
+      body: Stack(
+        children: [
+          buildCam(),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: Colors.black54,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _result,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          _category,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        String? img = getImage(_category);
+                        if (img == null) {
+                          return const SizedBox();
+                        }
+                        return Image.asset(
+                          img,
+                          height: 100,
+                          width: 100,
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
