@@ -37,7 +37,7 @@ class AnimatedBtn extends StatelessWidget {
                   Icon(CupertinoIcons.arrow_right),
                   SizedBox(width: 8),
                   Text(
-                    "Start the course",
+                    "Start",
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ],
