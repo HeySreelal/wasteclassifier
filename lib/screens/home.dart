@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:wasteclassifier/classifier/classifier.dart';
+import 'package:image/image.dart' as img;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,10 +11,36 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => HomeScreenState();
 }
 
+const _labelsFileName = 'assets/labels.txt';
+const _modelFileName = 'model_unquant.tflite';
+
 class HomeScreenState extends State<HomeScreen> {
+  Future<void> _loadClassifier() async {
+    debugPrint(
+      'Start loading of Classifier with '
+      'labels at $_labelsFileName, '
+      'model at $_modelFileName',
+    );
+
+    final classifier = await Classifier.loadWith(
+      labelsFileName: _labelsFileName,
+      modelFileName: _modelFileName,
+    );
+    _classifier = classifier!;
+  }
+
+  late Classifier _classifier;
+
   late List<CameraDescription> _cameras;
 
   CameraController? controller;
+
+  @override
+  void dispose() {
+    controller?.dispose();
+
+    super.dispose();
+  }
 
   void setup() async {
     _cameras = await availableCameras();
@@ -38,10 +66,29 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  int count = 0;
+
   Future<void> scan() async {
     try {
       await controller?.startImageStream((CameraImage image) {
-        // Do something with the image here.
+        count++;
+
+        if (count % 15 != 0) {
+          return;
+        }
+
+        count = 0;
+
+        final img.Image convertedImage = img.Image.fromBytes(
+          image.planes[0].bytesPerRow,
+          image.height,
+          image.planes[0].bytes,
+          format: img.Format.bgra,
+        );
+
+        final results = _classifier.predict(convertedImage);
+
+        log("Results: $results");
       });
     } catch (e, st) {
       log(e.toString(), stackTrace: st);
@@ -51,6 +98,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     setup();
+    _loadClassifier();
     super.initState();
   }
 

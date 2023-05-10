@@ -80,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     btnAnimationColtroller: _btnAnimationColtroller,
                     press: () {
                       _btnAnimationColtroller.isActive = true;
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const HomeScreen(),

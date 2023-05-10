@@ -209,7 +209,7 @@ packages:
     source: hosted
     version: "4.0.2"
   image:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image
       sha256: "8e9d133755c3e84c73288363e6343157c383a0c6c56fc51afcc5d4d7180306d6"
@@ -445,14 +445,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.16"
-  tflite_flutter:
-    dependency: "direct main"
-    description:
-      name: tflite_flutter
-      sha256: "88b203c6efd7f4269aa137ef31e760d53e6639e60cd17bb86602462f72d4176b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.5"
   tflite_flutter_helper_plus:
     dependency: "direct main"
     description:
@@ -462,7 +454,7 @@ packages:
     source: hosted
     version: "0.0.2"
   tflite_flutter_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: tflite_flutter_plus
       sha256: "72c7363df4be932541b82f8bc7e544df343f6dea1f6e614a3efa2a7dd73dff2e"
