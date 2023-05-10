@@ -1,0 +1,13 @@
+0 apple
+1 battery
+2 cardboard
+3 carrot
+4 mask
+5 medicine
+6 metal
+7 nothing
+8 paper
+9 pen
+10 pencil
+11 tomato
+12 zfood
